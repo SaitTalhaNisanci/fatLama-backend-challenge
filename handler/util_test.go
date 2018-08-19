@@ -14,9 +14,9 @@ func TestParseQuery(t *testing.T) {
 	urlValues["lng"] = []string{"15.5726"}
 	reqParams, err := parseQuery(urlValues)
 	assert.NoError(t, err)
-	assert.Equal(t, "camera", reqParams.searchTerm)
-	assert.Equal(t, 12.12312, reqParams.lat)
-	assert.Equal(t, 15.5726, reqParams.lng)
+	assert.Equal(t, "camera", reqParams.SearchTerm())
+	assert.Equal(t, 12.12312, reqParams.Lat())
+	assert.Equal(t, 15.5726, reqParams.Lng())
 
 }
 

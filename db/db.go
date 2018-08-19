@@ -38,25 +38,13 @@ func (i *Items) InitDB(dataSourcePath string) (*sql.DB, error) {
 	return db, err
 }
 
-// LoadItems loads all the items from the database.
-func (i *Items) LoadItems() ([]*model.Item, error) {
-	if i.db == nil {
-		return nil, errors.New("database is nil")
-	}
-	rows, err := i.db.Query("SELECT * FROM items")
-	if err != nil {
-		return nil, err
-	}
-	return i.loadItemsInternal(rows)
-}
-
 // LoadItemsBySearchTerm loads items that have the given search term in its item name.
 func (i *Items) LoadItemsBySearchTerm(searchTerm string) ([]*model.Item, error) {
 	if i.db == nil {
 		return nil, errors.New("database is nil")
 	}
-	rows, err := i.db.Query("SELECT * FROM items" +
-		" WHERE item_name LIKE '%" + searchTerm + "%'")
+	searchQuery := generateQuery(searchTerm)
+	rows, err := i.db.Query(searchQuery)
 	if err != nil {
 		return nil, err
 	}
