@@ -47,6 +47,23 @@ func (i *Items) LoadItems() ([]*model.Item, error) {
 	if err != nil {
 		return nil, err
 	}
+	return i.loadItemsInternal(rows)
+}
+
+// LoadItemsBySearchTerm loads items that have the given search term in its item name.
+func (i *Items) LoadItemsBySearchTerm(searchTerm string) ([]*model.Item, error) {
+	if i.db == nil {
+		return nil, errors.New("database is nil")
+	}
+	rows, err := i.db.Query("SELECT * FROM items" +
+		" WHERE item_name LIKE '%" + searchTerm + "%'")
+	if err != nil {
+		return nil, err
+	}
+	return i.loadItemsInternal(rows)
+}
+
+func (i *Items) loadItemsInternal(rows *sql.Rows) ([]*model.Item, error) {
 	items := make([]*model.Item, 0)
 	for rows.Next() {
 		item := new(model.Item)
