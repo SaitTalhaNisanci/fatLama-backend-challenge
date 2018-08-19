@@ -20,13 +20,15 @@ const (
 
 func main() {
 	// initialize database
-	err := db.InitDB(dataSourcePath)
+	itemsDB, err := db.NewItems(dataSourcePath)
 	if err != nil {
 		log.Fatal("Database could not start: ", err)
 	}
 	r := mux.NewRouter()
 	// add search GET endpoint to the router
-	r.HandleFunc(searchEndpoint, handler.SearchHandler).Methods("GET")
+	r.HandleFunc(searchEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		handler.SearchHandler(w, r, itemsDB)
+	}).Methods("GET")
 	// start the server
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {

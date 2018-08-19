@@ -11,26 +11,39 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var db *sql.DB
-
 const driverName = "sqlite3"
 
-// InitDB initializes the database from the given dataSourcePath.
-func InitDB(dataSourcePath string) error {
-	var err error
-	if _, err = ioutil.ReadFile(dataSourcePath); err != nil {
-		return err
+type Items struct {
+	db *sql.DB
+}
+
+// NewItems returns an Items database from the given dataSourcePath.
+// It returns an error if the path doesnt exist or there was a problem with loading the database.
+func NewItems(dataSourcePath string) (*Items, error) {
+	items := &Items{}
+	db, err := items.InitDB(dataSourcePath)
+	if err != nil {
+		return nil, err
 	}
-	db, err = sql.Open(driverName, dataSourcePath)
-	return err
+	items.db = db
+	return items, nil
+}
+
+// InitDB initializes the database from the given dataSourcePath.
+func (i *Items) InitDB(dataSourcePath string) (*sql.DB, error) {
+	if _, err := ioutil.ReadFile(dataSourcePath); err != nil {
+		return nil, err
+	}
+	db, err := sql.Open(driverName, dataSourcePath)
+	return db, err
 }
 
 // LoadItems loads all the items from the database.
-func LoadItems() ([]*model.Item, error) {
-	if db == nil {
+func (i *Items) LoadItems() ([]*model.Item, error) {
+	if i.db == nil {
 		return nil, errors.New("database is nil")
 	}
-	rows, err := db.Query("SELECT * FROM items")
+	rows, err := i.db.Query("SELECT * FROM items")
 	if err != nil {
 		return nil, err
 	}
