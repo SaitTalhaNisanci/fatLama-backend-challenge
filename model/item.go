@@ -16,6 +16,17 @@ type Item struct {
 	ImageUrls string
 }
 
+// NewItem returns an Item with the given parameters.
+func NewItem(name string, lat float64, lng float64, url string, imageUrls string) *Item {
+	return &Item{
+		Name:      name,
+		Lat:       lat,
+		Lng:       lng,
+		Url:       url,
+		ImageUrls: imageUrls,
+	}
+}
+
 func (i *Item) String() string {
 	return fmt.Sprintf("Name: %s, Lat: %f, Lng: %f, Url: %s, ImageUrls: %s", i.Name, i.Lat,
 		i.Lng, i.Url, i.ImageUrls)

@@ -26,9 +26,9 @@ const (
 	// Matching a word means matching exactly here. These coefficients can be interpreted as follows:
 	//  Assume there are 2 items in database that match our search query.
 	//  First item's name matches two words from the query, second item's name matches one word from the query.
-	//  Second item will be displayed before the first item if it is at least 10.000 meters more closer to the query location
+	//  Second item will be displayed before the first item if it is at least 30.000 meters more closer to the query location
 	//  compared to the first item.
-	textMatchCoeff = distanceCoeff * 10000
+	textMatchCoeff = distanceCoeff * 30000
 )
 
 // Params holds GET request parameters.
