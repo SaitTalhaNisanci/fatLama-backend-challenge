@@ -16,7 +16,7 @@ func hsin(theta float64) float64 {
 //
 // distance returned is METERS!!!!!!
 // http://en.wikipedia.org/wiki/Haversine_formula
-func distance(lat1, lon1, lat2, lon2 float64) float64 {
+func distance(lat1, lon1, lat2, lon2 float64) int {
 	// convert to radians
 	// must cast radius as float to multiply later
 	var la1, lo1, la2, lo2, r float64
@@ -30,5 +30,5 @@ func distance(lat1, lon1, lat2, lon2 float64) float64 {
 	// calculate
 	h := hsin(la2-la1) + math.Cos(la1)*math.Cos(la2)*hsin(lo2-lo1)
 
-	return 2 * r * math.Asin(math.Sqrt(h))
+	return int(2 * r * math.Asin(math.Sqrt(h)))
 }
