@@ -19,14 +19,26 @@ const (
 	lng = "lng"
 )
 
-// searchParams holds GET request parameters.
-type searchParams struct {
+// SearchParams holds GET request parameters.
+type SearchParams struct {
 	searchTerm string
 	lat        float64
 	lng        float64
 }
 
-func newSearchParams(searchTerm string, latStr string, lngStr string) (*searchParams, error) {
+func (s *SearchParams) SearchTerm() string {
+	return s.searchTerm
+}
+
+func (s *SearchParams) Lat() float64 {
+	return s.lat
+}
+
+func (s *SearchParams) Lng() float64 {
+	return s.lng
+}
+
+func newSearchParams(searchTerm string, latStr string, lngStr string) (*SearchParams, error) {
 	lat, err := strconv.ParseFloat(latStr, bitSize)
 	if err != nil {
 		return nil, err
@@ -36,7 +48,7 @@ func newSearchParams(searchTerm string, latStr string, lngStr string) (*searchPa
 	if err != nil {
 		return nil, err
 	}
-	searchParams := &searchParams{
+	searchParams := &SearchParams{
 		searchTerm: searchTerm,
 		lat:        lat,
 		lng:        lng,
@@ -44,8 +56,8 @@ func newSearchParams(searchTerm string, latStr string, lngStr string) (*searchPa
 	return searchParams, nil
 }
 
-// parseQuery returns searchParams from the given urlValues.
-// It returns an error if values cannot be casted to searchParams fields properly.
-func parseQuery(values url.Values) (*searchParams, error) {
+// parseQuery returns SearchParams from the given urlValues.
+// It returns an error if values cannot be casted to SearchParams fields properly.
+func parseQuery(values url.Values) (*SearchParams, error) {
 	return newSearchParams(values[searchTerm][0], values[lat][0], values[lng][0])
 }

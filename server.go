@@ -28,7 +28,7 @@ func main() {
 	// add search GET endpoint to the router
 	r.HandleFunc(searchEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		handler.SearchHandler(w, r, itemsDB)
-	}).Methods("GET")
+	}).Methods(http.MethodGet)
 	// start the server
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {
