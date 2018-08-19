@@ -26,7 +26,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request, itemsDB *db.Items) {
 		return
 	}
 
-	resultItems, err := search.DoSearch(searchParams.SearchTerm(), itemsDB)
+	resultItems, err := search.DoSearch(searchParams, itemsDB, defaultPageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -36,7 +36,5 @@ func SearchHandler(w http.ResponseWriter, r *http.Request, itemsDB *db.Items) {
 		http.Error(w, noItemFound, http.StatusNoContent)
 		return
 	}
-
-	resultItems = search.SortByRelevance(resultItems, searchParams.Lat(), searchParams.Lng(), defaultPageSize)
 	json.NewEncoder(w).Encode(resultItems)
 }
