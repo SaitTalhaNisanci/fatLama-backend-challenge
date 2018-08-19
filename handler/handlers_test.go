@@ -45,3 +45,12 @@ func TestSearchHandlerWithInvalidLng(t *testing.T) {
 	SearchHandler(res, req, itemsDB)
 	assert.Equal(t, res.Code, http.StatusBadRequest)
 }
+
+func TestSearchHandlerWithNoContent(t *testing.T) {
+	req, _ := http.NewRequest(http.MethodGet, "/search?searchTerm=invalidSearchTerm&lat=12.11&lng=11.21", nil)
+	res := httptest.NewRecorder()
+	itemsDB, err := db.NewItems(databasePath)
+	assert.NoError(t, err)
+	SearchHandler(res, req, itemsDB)
+	assert.Equal(t, res.Code, http.StatusNoContent)
+}
