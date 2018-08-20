@@ -80,12 +80,12 @@ func DoSearch(searchParams *Params, itemsDB *db.Items, pageSize int) ([]*model.I
 	if err != nil {
 		return nil, err
 	}
-	return SortByRelevance(loadedItems, searchParams, pageSize), nil
+	return SortByScore(loadedItems, searchParams, pageSize), nil
 }
 
-// SortByRelevance sorts items based on their score with respect to given searchParams.
+// SortByScore sorts items based on their score with respect to given searchParams.
 // It returns at most pageSize items. It might return less or empty if there is less content or no content.
-func SortByRelevance(items []*model.Item, searchParams *Params, pageSize int) []*model.Item {
+func SortByScore(items []*model.Item, searchParams *Params, pageSize int) []*model.Item {
 	sort.Slice(items, func(i, j int) bool {
 		return calculateScore(items[i], searchParams) >
 			calculateScore(items[j], searchParams)

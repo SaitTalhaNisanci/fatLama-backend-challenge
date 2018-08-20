@@ -2,8 +2,11 @@ package db
 
 import "strings"
 
-const seperator = " "
+// separator is used to split search term.
+const separator = " "
 
+// generateQuery generates SQL query with search term.
+// It adds a 'LIKE' pattern for each word in search term.
 func generateQuery(searchTerm string) string {
 	baseQuery := "SELECT * FROM items" +
 		" WHERE"
@@ -18,6 +21,7 @@ func generateQuery(searchTerm string) string {
 	return searchQuery
 }
 
+// splitWords split the words by space and returns a string slice.
 func splitWords(words string) []string {
-	return strings.Split(words, seperator)
+	return strings.Split(words, separator)
 }

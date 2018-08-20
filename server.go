@@ -18,6 +18,7 @@ const (
 	searchEndpoint = "/search"
 )
 
+// initializeRouter creates a mux router and adds handle functions.
 func initializeRouter(itemsDB *db.Items) *mux.Router {
 	r := mux.NewRouter()
 	// add search GET endpoint to the router
@@ -33,7 +34,9 @@ func main() {
 	if err != nil {
 		log.Fatal("Database could not start: ", err)
 	}
+
 	r := initializeRouter(itemsDB)
+
 	// start the server
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {

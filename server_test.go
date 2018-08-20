@@ -25,7 +25,7 @@ func TestServerRouter(t *testing.T) {
 	itemsDB, _ := db.NewItems(dataSourcePath)
 	r := initializeRouter(itemsDB)
 
-	reqAmount := 2000
+	reqAmount := 1000
 	wg.Add(reqAmount)
 	for i := 0; i < reqAmount; i++ {
 		go func() {

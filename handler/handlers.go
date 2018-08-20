@@ -13,6 +13,7 @@ import (
 // If there are less than 20 items matching the query the result will be less than 20.
 const defaultPageSize = 20
 
+// noItemFound is returned as an error message when no item is found for search.
 const noItemFound = "No item is found for the query!"
 
 // SearchHandler handles the search and returns the top matching 20 items.
