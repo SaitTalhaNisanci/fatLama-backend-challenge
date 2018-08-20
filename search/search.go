@@ -1,3 +1,4 @@
+// package search contains search methods such as scoring.
 package search
 
 import (

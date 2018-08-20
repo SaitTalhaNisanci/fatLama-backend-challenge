@@ -1,3 +1,4 @@
+// package db contains database methods.
 package db
 
 import (

@@ -3,7 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/SaitTalhaNisanci/fatLama-backend-challenge?status.svg)](https://godoc.org/github.com/SaitTalhaNisanci/fatLama-backend-challenge)
 [![Go Report Card](https://goreportcard.com/badge/github.com/SaitTalhaNisanci/fatLama-backend-challenge)](https://goreportcard.com/report/github.com/SaitTalhaNisanci/fatLama-backend-challenge)
 
-##Installation
+## Installation
 
 Make sure you have **go 1.8+** installed, if you dont have go please [install it here](https://golang.org/doc/install).
 

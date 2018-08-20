@@ -1,3 +1,4 @@
+// package model contains database models.
 package model
 
 import "fmt"
