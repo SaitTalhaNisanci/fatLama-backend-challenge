@@ -1,28 +1,103 @@
-# Backend Challenge
-## Introduction
-Fat Lama relies heavily on our search in order for users to be able to find the items they need. The main two factors in the search are:
-- **Text match**: the user types a word or phrase that they want to find, and the search returns items that match this.
-- **Location**: the user indicates their location (through geolocation or through typing in the location search box) and the search returns items near the user
+# FatLama Backend Challenge 
 
-On the production web & mobile app there are other factors that come into play such as lender rating, response time, categories, time since listing, and more. For this challenge though, we want you to focus only on the two main factors given above.
+[![GoDoc](https://godoc.org/github.com/SaitTalhaNisanci/fatLama-backend-challenge?status.svg)](https://godoc.org/github.com/SaitTalhaNisanci/fatLama-backend-challenge)
+[![Go Report Card](https://goreportcard.com/badge/github.com/SaitTalhaNisanci/fatLama-backend-challenge)](https://goreportcard.com/report/github.com/SaitTalhaNisanci/fatLama-backend-challenge)
 
-## The Challenge
-We want you to build a `GET /search` endpoint that will return the most appropriate 20 items given `searchTerm`, `lat` (latitude) and `lng` (longitude). e.g. `/search?searchTerm=camera&lat=51.948&lng=0.172943`. It is up to you to decide how to weight the two factors to return the most relevant results. We have provided you with a sqlite database containing just under 2000 items with the relevant fields.
+##Installation
 
-When you are finished, write up a short summary of why you made the choices you did in terms of technology and design. This should be no more than 500 words.
+Make sure you have **go 1.8+** installed, if you dont have go please [install it here](https://golang.org/doc/install).
 
-## Things to think about:
-- Think about points of failure and how your endpoint will perform under load.
-- Language/frameworks: Choose whatever language you will write your best code in. Please **do not choose a language/technology that you are unfamiliar with.**
-- Testing: use whatever tools you prefer to test your code appropriately
-- Try to implement appropriate [separation of concerns](https://effectivesoftwaredesign.com/2012/02/05/separation-of-concerns/) & modular code
-- Think hard about naming of functions and variables. Your code must be readable
-- Code style & file structure is up to you, but make sure it is consistent and easy to understand
+Make sure your **GOROOT** and **GOPATH** are set correctly.
 
-## Checklist for Challenge
-- [ ] Duplicate this repo (please do not fork it, see [instructions](https://help.github.com/articles/duplicating-a-repository/)). Bitbucket offers free private repos if you don't want to use a public one.
-- [ ] Build API endpoint for Fat Lama search with according to above specifications
-- [ ] Ensure all code is sufficiently tested
-- [ ] Write brief summary on the approach you took and the tools you used (max 500 words)
-- [ ] Include instructions on how to build/ run your solution
-- [ ] Send us a link to your new repo.
+Run the following to get the code:
+```
+go get -u github.com/SaitTalhaNisanci/fatLama-backend-challenge
+```
+
+
+## Technology
+
+- Go
+- [gorilla mux](https://github.com/gorilla/mux) router and dispatcher
+- [testify](https://github.com/stretchr/testify) testing
+- [sqlite](https://www.sqlite.org/index.html) database engine
+
+
+## Search
+
+`/search?searchTerm=camera&lat=51.948&lng=0.172943`
+
+Search engine splits the searchTerm to its words, and for each item 
+in the database it checks if there is any matched word. Even if there is
+one match with an item's name it will be loaded. For example If
+`searchTerm` is **canon camera**, items that have **canon** or **camera**
+or both will be loaded. When calculating a score of an item, the number 
+of matched words with its name and searchTerm are linearly combined with 
+the distance.
+
+```
+score = textMatchCoeff * #matchedWords - distanceCoeff*distance(item, searchLocation)
+```
+
+Note that distance is subtracted as the further it is the less relevant it is.
+
+These coefficients can be set better with a real data and some observations. 
+
+Default page size is 20, which means at most 20 items will be returned.
+
+If there is no content for a search query, ``http.StatusNoContent`` is returned.
+
+If search parameters are not valid,  ``http.StatusBadRequest`` is returned.
+
+## Design Details
+
+
+The entry point for the server is `server.go`. Router and database are
+initialized there. The router currently has only one endpoint which is `/search`.
+
+There are 4 packages:
+
+### db
+
+db contains database methods, `process` method processes incoming 
+search queries. A query channel sends search queries to this method to
+be processed.
+
+### handler
+
+handler contains hanlder functions. Currently there is only one handler, search handler.
+Search parameter validation etc are done in this package.
+
+
+### model
+
+model contains our models. Currently there is only one model which is **Item**.
+Item contains Name, Lat, Lng, Url, ImageUrls.
+
+### search
+
+search package communicates with db package to load items and sort them by a
+score. Score is calculated based on linear combination of distance and matched words.
+
+
+Different functionalities are separated to difference packages for better
+readability and testing.
+
+Currently each request hits the database. For scalability and
+better latency in memory cache such as redis, hazelcast can be used.
+
+
+## Test
+
+To run tests:
+```
+go test ./...
+```
+
+To run tests with race:
+
+```
+go test -race ./...
+```
+
+Travis can be added for CI to the repository.
