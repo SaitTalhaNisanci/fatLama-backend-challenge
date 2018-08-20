@@ -15,6 +15,7 @@ go get -u github.com/SaitTalhaNisanci/fatLama-backend-challenge
 ```
 
 
+
 ## Technology
 
 - Go
@@ -22,6 +23,8 @@ go get -u github.com/SaitTalhaNisanci/fatLama-backend-challenge
 - [testify](https://github.com/stretchr/testify) testing
 - [sqlite](https://www.sqlite.org/index.html) database engine
 
+[CodeReviewComments](https://github.com/golang/go/wiki/CodeReviewComments) is followed 
+during the development.
 
 ## Search
 
@@ -49,6 +52,14 @@ If there is no content for a search query, ``http.StatusNoContent`` is returned.
 
 If search parameters are not valid,  ``http.StatusBadRequest`` is returned.
 
+Currently if the number of requests per second increase the latency will increase
+but as far as tested in `server_test.go` the server wont fail to serve. Note that it is 
+only a smoke test not a soak test.
+
+If an item has duplicate words in its name they will be counted as one. So
+an item name `camera camera camera` will be same as `camera`.
+
+
 ## Design Details
 
 
@@ -65,14 +76,14 @@ be processed.
 
 ### handler
 
-handler contains hanlder functions. Currently there is only one handler, search handler.
+handler contains handler functions. Currently there is only one handler, search handler.
 Search parameter validation etc are done in this package.
 
 
 ### model
 
-model contains our models. Currently there is only one model which is **Item**.
-Item contains Name, Lat, Lng, Url, ImageUrls.
+model contains database models. Currently there is only one model which is **Item**.
+Item contains `Name, Lat, Lng, Url, ImageUrls`.
 
 ### search
 
@@ -80,14 +91,16 @@ search package communicates with db package to load items and sort them by a
 score. Score is calculated based on linear combination of distance and matched words.
 
 
-Different functionalities are separated to difference packages for better
+Different functionalities are separated into difference packages for better
 readability and testing.
 
 Currently each request hits the database. For scalability and
-better latency in memory cache such as redis, hazelcast can be used.
+better latency in memory cache such as `redis, hazelcast can be used.
 
 
 ## Test
+
+The code is tested extensively,
 
 To run tests:
 ```
@@ -101,3 +114,7 @@ go test -race ./...
 ```
 
 Travis can be added for CI to the repository.
+
+Also note that currently the same database is used for testing and production
+but they should be separated.
+
