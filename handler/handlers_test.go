@@ -15,7 +15,7 @@ import (
 const databasePath = "../fatlama.sqlite3"
 
 func TestSearchHandler(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/search?searchTerm=camera&lat=54.948&lng=0.172943", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/search?searchTerm=camera&lat=54.948&lng=0.172943", nil)
 	res := httptest.NewRecorder()
 	itemsDB, err := db.NewItems(databasePath)
 	assert.NoError(t, err)
@@ -53,4 +53,40 @@ func TestSearchHandlerWithNoContent(t *testing.T) {
 	assert.NoError(t, err)
 	SearchHandler(res, req, itemsDB)
 	assert.Equal(t, res.Code, http.StatusNoContent)
+}
+
+func TestSearchHandlerEmptySearchTerm(t *testing.T) {
+	req, _ := http.NewRequest(http.MethodGet, "/search?searchTerm=&lat=54.948&lng=0.172943", nil)
+	res := httptest.NewRecorder()
+	itemsDB, err := db.NewItems(databasePath)
+	assert.NoError(t, err)
+	SearchHandler(res, req, itemsDB)
+	assert.Equal(t, res.Code, http.StatusBadRequest)
+}
+
+func TestSearchHandlerMissingSearchTerm(t *testing.T) {
+	req, _ := http.NewRequest(http.MethodGet, "/search?lat=54.948&lng=0.172943", nil)
+	res := httptest.NewRecorder()
+	itemsDB, err := db.NewItems(databasePath)
+	assert.NoError(t, err)
+	SearchHandler(res, req, itemsDB)
+	assert.Equal(t, res.Code, http.StatusBadRequest)
+}
+
+func TestSearchHandlerMissingLat(t *testing.T) {
+	req, _ := http.NewRequest(http.MethodGet, "/search?searchTerm=camera&lng=0.172943", nil)
+	res := httptest.NewRecorder()
+	itemsDB, err := db.NewItems(databasePath)
+	assert.NoError(t, err)
+	SearchHandler(res, req, itemsDB)
+	assert.Equal(t, res.Code, http.StatusBadRequest)
+}
+
+func TestSearchHandlerMissingLng(t *testing.T) {
+	req, _ := http.NewRequest(http.MethodGet, "/search?searchTerm=camera&lat=54.948", nil)
+	res := httptest.NewRecorder()
+	itemsDB, err := db.NewItems(databasePath)
+	assert.NoError(t, err)
+	SearchHandler(res, req, itemsDB)
+	assert.Equal(t, res.Code, http.StatusBadRequest)
 }

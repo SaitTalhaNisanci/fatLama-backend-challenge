@@ -16,12 +16,14 @@ const defaultPageSize = 20
 // noItemFound is returned as an error message when no item is found for search.
 const noItemFound = "No item is found for the query!"
 
-// SearchHandler handles the search and returns the top matching 20 items.
+// SearchHandler handles the search and returns the top matching 20 items from the database.
 // Search currently consists of a search text, longitude and latitude.
+// All of these parameters should be given for a search query.
+// If get parameters cannot be parsed, 'http.StatusBadRequest' status is returned.
 // If no content is found 'http.StatusNoContent' status is returned.
+// The result items will be sent in JSON format.
 func SearchHandler(w http.ResponseWriter, r *http.Request, itemsDB *db.Items) {
-	vars := r.URL.Query()
-	searchParams, err := parseQuery(vars)
+	searchParams, err := parseQuery(r.URL.Query())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -37,5 +39,6 @@ func SearchHandler(w http.ResponseWriter, r *http.Request, itemsDB *db.Items) {
 		http.Error(w, noItemFound, http.StatusNoContent)
 		return
 	}
+	// encode and send result items as JSON
 	json.NewEncoder(w).Encode(resultItems)
 }

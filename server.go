@@ -11,7 +11,7 @@ import (
 
 const (
 
-	// dataSourcePath is where the database is.
+	// dataSourcePath is where the database data is.
 	dataSourcePath = "./fatlama.sqlite3"
 
 	// searchEndpoint is the entry point of search

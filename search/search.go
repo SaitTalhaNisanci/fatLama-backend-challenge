@@ -26,12 +26,14 @@ const (
 	// Matching a word means matching exactly here. These coefficients can be interpreted as follows:
 	//  Assume there are 2 items in database that match our search query.
 	//  First item's name matches two words from the query, second item's name matches one word from the query.
-	//  Second item will be displayed before the first item if it is at least 30.000 meters more closer to the query location
+	//  Second item will be displayed before the first item if it is at least 20.000 meters more closer to the query location
 	//  compared to the first item.
-	textMatchCoeff = distanceCoeff * 30000
+	// Note that with the complete database and what we want we can set a better coefficient here based on what we want
+	// to display to users.
+	textMatchCoeff = distanceCoeff * 20000
 )
 
-// Params holds GET request parameters.
+// Params holds search GET request parameters.
 type Params struct {
 	searchTerm string
 	lat        float64
@@ -74,6 +76,7 @@ func NewSearchParams(searchTerm string, latStr string, lngStr string) (*Params, 
 }
 
 // DoSearch loads items from database with respect to the search term. It then sorts the items based on their score.
+// The score is calculated based on matched words and distance.
 // It returns at most pageSize items. It might return less or empty if there is less content or no content.
 func DoSearch(searchParams *Params, itemsDB *db.Items, pageSize int) ([]*model.Item, error) {
 	loadedItems, err := itemsDB.LoadItemsBySearchTerm(searchParams.SearchTerm())
@@ -83,7 +86,7 @@ func DoSearch(searchParams *Params, itemsDB *db.Items, pageSize int) ([]*model.I
 	return SortByScore(loadedItems, searchParams, pageSize), nil
 }
 
-// SortByScore sorts items based on their score with respect to given searchParams.
+// SortByScore sorts items based on their score in ascending order with respect to given searchParams.
 // It returns at most pageSize items. It might return less or empty if there is less content or no content.
 func SortByScore(items []*model.Item, searchParams *Params, pageSize int) []*model.Item {
 	sort.Slice(items, func(i, j int) bool {

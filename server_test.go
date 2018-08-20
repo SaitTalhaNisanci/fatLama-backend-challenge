@@ -46,11 +46,11 @@ func generateValidSearchQuery() string {
 	rand.Seed(time.Now().UTC().UnixNano())
 	rndIndex := rand.Int31n(int32(len(searchTerms)))
 	searchTerm := searchTerms[rndIndex]
-	lat := floattostr(60 * rand.Float64())
-	lng := floattostr(60 * rand.Float64())
+	lat := floatToStr(60 * rand.Float64())
+	lng := floatToStr(60 * rand.Float64())
 	return "/search?searchTerm=" + searchTerm + "&lat=" + lat + "&lng=" + lng
 }
 
-func floattostr(fv float64) string {
+func floatToStr(fv float64) string {
 	return strconv.FormatFloat(fv, 'f', 2, 64)
 }
